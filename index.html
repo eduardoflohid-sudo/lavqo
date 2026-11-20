@@ -34,7 +34,7 @@
 }
 
 /* night sky, ported from the LAVQO app (same seed, so it is the same sky) */
-#sky{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;contain:strict;
+#sky{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;contain:strict;
   background:radial-gradient(1100px 680px at 88% -12%,rgba(200,171,116,.06),transparent 62%),radial-gradient(900px 620px at -6% 112%,rgba(150,160,182,.04),transparent 60%),#050506}
 #sky::before{content:"";position:absolute;left:-20%;right:-20%;top:28%;height:46%;transform:rotate(-14deg);background:radial-gradient(closest-side,rgba(176,186,206,.05),rgba(176,186,206,.018) 55%,transparent 100%);filter:blur(30px)}
 .sky-layer{position:absolute;inset:-24px;width:calc(100% + 48px);height:calc(100% + 48px)}
@@ -42,11 +42,11 @@
 .sky-twinkle.is-warm{background:#ecd6a8;box-shadow:0 0 4px 1px rgba(236,214,168,.32)}
 @media (prefers-reduced-motion:no-preference){.sky-near{animation:sky-drift 240s ease-in-out infinite alternate}.sky-bright{animation-duration:300s}.sky-twinkle{animation:sky-twinkle 12s ease-in-out infinite}}
 @keyframes sky-drift{to{transform:translate3d(-14px,8px,0)}}
-@keyframes sky-twinkle{0%,100%{opacity:.08}50%{opacity:.62}}
+@keyframes sky-twinkle{0%,100%{opacity:.15}50%{opacity:.9}}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font:16px/1.6 var(--body);
+body{background:#050506;color:var(--ink);font:16px/1.6 var(--body);
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.wrap{max-width:1080px;margin:0 auto}
+.wrap{max-width:1080px;margin:0 auto;position:relative;z-index:1}
 a{color:var(--accent)}
 h1,h2,h3{font-family:var(--display);font-weight:400;text-wrap:balance;letter-spacing:-.01em;margin:0}
 h2{font-size:clamp(26px,4vw,38px);line-height:1.12}
@@ -327,8 +327,8 @@ footer{border-top:1px solid var(--line);margin-top:72px;padding-block:28px 48px;
    h+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="${fill}" opacity="${o.toFixed(2)}"/>`}
   svg.innerHTML=h;return svg}
  const sky=document.createElement('div');sky.id='sky';sky.setAttribute('aria-hidden','true');
- sky.append(layer(small?160:340,.3,.75,.1,.36,.05,'sky-far'),layer(small?40:80,.6,1.1,.24,.55,.07,'sky-near'),layer(small?7:16,1.05,1.5,.5,.78,.12,'sky-near sky-bright',true));
- for(let i=0;i<(small?5:10);i++){const t=document.createElement('span');t.className='sky-twinkle';t.style.left=(rng()<.5?rng()*28:72+rng()*28).toFixed(2)+'%';t.style.top=(rng()*100).toFixed(2)+'%';t.style.animationDuration=(9+rng()*9).toFixed(1)+'s';t.style.animationDelay=(-rng()*18).toFixed(1)+'s';if(rng()<.25)t.classList.add('is-warm');sky.append(t)}
+ sky.append(layer(small?220:460,.35,.85,.18,.5,.05,'sky-far'),layer(small?60:120,.7,1.25,.35,.75,.08,'sky-near'),layer(small?10:22,1.2,1.8,.65,.95,.14,'sky-near sky-bright',true));
+ for(let i=0;i<(small?8:16);i++){const t=document.createElement('span');t.className='sky-twinkle';t.style.left=(rng()<.5?rng()*28:72+rng()*28).toFixed(2)+'%';t.style.top=(rng()*100).toFixed(2)+'%';t.style.animationDuration=(9+rng()*9).toFixed(1)+'s';t.style.animationDelay=(-rng()*18).toFixed(1)+'s';if(rng()<.25)t.classList.add('is-warm');sky.append(t)}
  document.body.prepend(sky)})();
 
 const D=[
