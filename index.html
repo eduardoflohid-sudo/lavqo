@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Does day trading actually work? 25 trading strategies tested on 10 years of real market data, with every result public.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="LAVQO Research: Does day trading actually work?">
+<meta property="og:description" content="Does day trading actually work? 25 trading strategies tested on 10 years of real market data, with every result public.">
+<meta property="og:url" content="https://eduardoflohid-sudo.github.io/lavqo/">
+<meta property="og:image" content="https://eduardoflohid-sudo.github.io/lavqo/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="author" content="Eduardo Flores Hidalgo">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>LAVQO Research</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a research lab's public results board; hero verdict, a working explorer, findings with charts, then the method and the builder */
+:root{
+  --bg:#f3f5f8; --surface:#ffffff; --ink:#0f1a2b; --muted:#5a6678; --line:#dbe1ea;
+  --accent:#2453d6; --accent-soft:#e3eafc;
+  --pos:#2453d6; --neg:#d9622b;            /* chart poles, validated for CVD */
+  --ok:#0f8a5f; --warn:#a86a00; --bad:#c2362f; /* status, always with a label */
+  --display:'Bricolage Grotesque',ui-sans-serif,system-ui,sans-serif;
+  --body:'IBM Plex Sans',ui-sans-serif,system-ui,-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0b111b; --surface:#131b28; --ink:#e8edf5; --muted:#9aa6b8; --line:#253043;
+  --accent:#7ea2ff; --accent-soft:#1a2745; --pos:#5b8af0; --neg:#d9622b;
+  --ok:#3fcf95; --warn:#f0b54a; --bad:#ff7a70; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b111b; --surface:#131b28; --ink:#e8edf5; --muted:#9aa6b8; --line:#253043;
+  --accent:#7ea2ff; --accent-soft:#1a2745; --pos:#5b8af0; --neg:#d9622b;
+  --ok:#3fcf95; --warn:#f0b54a; --bad:#ff7a70; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1080px;margin:0 auto}
+a{color:var(--accent)}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;letter-spacing:-.02em;margin:0}
+h2{font-size:clamp(26px,4vw,38px);line-height:1.12}
+h3{font-size:19px;font-weight:600;line-height:1.3}
+p{margin:0}
+.label{font:500 12px/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.lede{color:var(--muted);max-width:64ch;font-size:17px}
+section{padding-block:60px;border-top:1px solid var(--line);display:grid;gap:28px}
+.head{display:grid;gap:10px}
+
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:22px;flex-wrap:wrap}
+.logo{font:800 20px/1 var(--display);letter-spacing:.06em}
+.logo span{color:var(--accent)}
+.live{display:inline-flex;align-items:center;gap:8px;font:500 12px/1 var(--mono);color:var(--muted)}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+
+.tape{overflow:hidden;border-block:1px solid var(--line);background:var(--surface);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.tape-track{display:flex;gap:36px;width:max-content;padding:11px 0;font:500 13px/1 var(--mono);white-space:nowrap}
+.tape-track span{color:var(--muted)}
+.tape-track b{font-weight:500;color:var(--ink)}
+.tape-track .p{color:var(--pos)} .tape-track .n{color:var(--neg)}
+@media (prefers-reduced-motion:no-preference){.tape-track{animation:tape 60s linear infinite}.tape:hover .tape-track{animation-play-state:paused}}
+@keyframes tape{to{transform:translateX(-50%)}}
+.verdictline{font-size:18px;color:var(--muted)}
+.verdictline b{color:var(--ink);font-size:22px}
+.hero{display:grid;gap:26px;padding-block:36px 60px}
+.hero h1{font-size:clamp(40px,7vw,76px);line-height:1;font-weight:800;max-width:15ch}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.tile{background:var(--surface);padding:18px 20px;display:grid;gap:4px}
+.tile b{font:800 clamp(26px,3.6vw,38px)/1 var(--display);font-variant-numeric:tabular-nums}
+.tile span{font-size:14px;color:var(--muted)}
+.btn{all:unset;cursor:pointer;text-align:center;font:600 15px var(--body);padding:12px 18px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.btn:hover{border-color:var(--accent)}
+.btn:focus-visible,.chipbtn:focus-visible,tr[tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cta{display:flex;flex-wrap:wrap;gap:10px}
+
+.problem{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.problem div{display:grid;gap:8px;align-content:start}
+.problem p{color:var(--muted);font-size:15px}
+.big{font:800 34px/1 var(--display)}
+
+/* explorer */
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.chipbtn{all:unset;cursor:pointer;font:500 13px/1 var(--mono);padding:9px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted)}
+.chipbtn[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.explorer{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:20px;align-items:start}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface);max-height:620px;overflow-y:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font:500 11px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);position:sticky;top:0;background:var(--surface);z-index:1}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--bg)}
+tbody tr[aria-selected="true"]{background:var(--accent-soft)}
+td.r{text-align:right}
+.src{display:block;font-size:12px;color:var(--muted)}
+.status{font:600 11px/1 var(--mono);letter-spacing:.05em;text-transform:uppercase;padding:5px 8px;border-radius:6px;white-space:nowrap;display:inline-block}
+.status.rej{background:color-mix(in srgb,var(--bad) 13%,transparent);color:var(--bad)}
+.status.cand{background:color-mix(in srgb,var(--ok) 15%,transparent);color:var(--ok)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;display:grid;gap:14px;position:sticky;top:16px}
+.card .verdict{font:800 23px/1.2 var(--display)}
+.kv{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.kv div{border-top:1px solid var(--line);padding-top:8px;display:grid;gap:2px}
+.kv b{font:500 18px var(--mono);font-variant-numeric:tabular-nums}
+.kv span{font-size:12px;color:var(--muted)}
+.note{font-size:14px;color:var(--muted)}
+
+/* findings */
+.findings{display:grid;gap:22px}
+.finding{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:28px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:26px;align-items:center}
+.finding .txt{display:grid;gap:10px}
+.finding .txt p{color:var(--muted)}
+.chart{position:relative;min-width:0}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{fill:var(--muted);font:12px var(--mono)}
+.chart .strong{fill:var(--ink);font-weight:500}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--surface);font:12px/1.4 var(--mono);padding:6px 9px;border-radius:6px;white-space:nowrap;transform:translate(-50%,-110%)}
+.versus{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center}
+.vs{display:grid;gap:4px;padding:18px;border:1px solid var(--line);border-radius:14px;text-align:center}
+.vs b{font:800 30px/1 var(--display);font-variant-numeric:tabular-nums}
+.vs span{font-size:13px;color:var(--muted)}
+.arrow{font:500 22px var(--mono);color:var(--muted)}
+
+/* method: a real sequence */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.step{display:grid;gap:6px;align-content:start;padding:18px;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.step .label{color:var(--accent)}
+.step p{color:var(--muted);font-size:14px}
+
+.skills{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.skill{display:grid;gap:8px;align-content:start}
+.skill ul{margin:0;padding-left:18px;color:var(--muted);font-size:15px;display:grid;gap:4px}
+.stack{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:500 13px/1 var(--mono);padding:8px 11px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted)}
+
+.builder{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:28px;align-items:start}
+footer{border-top:1px solid var(--line);padding-block:28px 48px;color:var(--muted);font-size:13px;display:grid;gap:6px}
+
+@media (max-width:860px){
+  .explorer,.finding,.builder{grid-template-columns:1fr}
+  .card{position:static}
+  .steps{grid-template-columns:1fr 1fr}
+  .tiles{grid-template-columns:1fr 1fr}
+}
+@media (max-width:560px){
+  .problem,.steps,.skills,.kv{grid-template-columns:1fr}
+  .versus{grid-template-columns:1fr}
+  .arrow{transform:rotate(90deg);justify-self:center}
+  .hide-sm{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="top"><div class="logo">LAVQ<span>O</span> <span style="color:var(--muted);font-weight:600;letter-spacing:.02em">Research</span></div></div>
+  <div class="tape" aria-label="Selected results"><div class="tape-track" id="tape"></div></div>
+
+  <div class="hero">
+    <h1>Does day trading actually work? <em>We tested it.</em></h1>
+    <p class="verdictline"><b class="num">25</b> strategies · <b class="num">10</b> years of market data · <b class="num" style="color:var(--neg)">23</b> rejected · <b class="num" style="color:var(--pos)">2</b> survived</p>
+    <p class="lede">LAVQO Strategy Lab tests the trading strategies people actually use, from academic papers to viral YouTube videos, on a decade of real market data with real trading costs. Every result is public, including the losers.</p>
+    <div class="cta"><button class="btn primary" data-go="explore">Explore all 25 results</button><button class="btn" data-go="findings">What the data showed</button></div>
+    <div class="tiles">
+      <div class="tile"><b class="num">25</b><span>strategies tested, each with rules written in advance</span></div>
+      <div class="tile"><b class="num">14.3M</b><span>one-minute price bars in a single test, 2021–2025</span></div>
+      <div class="tile"><b class="num">25,857</b><span>earnings reports parsed from SEC filings</span></div>
+      <div class="tile"><b class="num">925</b><span>automated tests checking the engine</span></div>
+    </div>
+  </div>
+
+  <section>
+    <div class="head"><div class="label">The problem</div><h2>Most trading advice is never tested honestly.</h2></div>
+    <div class="problem">
+      <div><span class="big">Viral</span><h3>Strategies spread on views, not evidence</h3><p>Millions of new investors learn from YouTube and TikTok. The videos show winning trades. Nobody shows the 10-year record.</p></div>
+      <div><span class="big">Tuned</span><h3>Backtests are adjusted until they look good</h3><p>Change the settings enough times and any strategy looks profitable on past data. It stops working the moment real money goes in.</p></div>
+      <div><span class="big">Hidden</span><h3>Trading costs get left out</h3><p>Small, frequent trades pay a toll every time. A strategy can look great before costs and lose money after them.</p></div>
+    </div>
+  </section>
+
+  <section id="explore">
+    <div class="head"><div class="label">The results</div><h2>Every strategy we tested, and how it did.</h2><p class="lede">Click any row for the details. Profits are per $100,000 unless the strategy is measured in R, the amount risked per trade.</p></div>
+    <div class="filters" id="filters" role="group" aria-label="Filter strategies"></div>
+    <div class="explorer">
+      <div class="tablewrap"><table aria-label="Strategy results"><thead><tr><th>Strategy</th><th class="hide-sm">Type</th><th class="r">Result</th><th>Verdict</th></tr></thead><tbody id="rows"></tbody></table></div>
+      <div class="card" id="card" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section id="findings">
+    <div class="head"><div class="label">What the data showed</div><h2>Four things we learned from 25 tests.</h2></div>
+    <div class="findings">
+
+      <div class="finding">
+        <div class="txt"><div class="label">Finding 1</div><h3>Fast trading strategies lose to trading costs.</h3><p>On the intraday strategies, the average profit per trade before costs was under 2 basis points (0.02%). Just crossing the bid-ask spread costs about 3. Even a perfect cost model couldn't save them.</p></div>
+        <div class="chart" id="c1"></div>
+      </div>
+
+      <div class="finding">
+        <div class="txt"><div class="label">Finding 2</div><h3>Small samples lie.</h3><p>One strategy made money on its first 53 trades. Tested again on 5 years of new data, it lost money in all 5 years. That's why every test here needs a second, untouched period before it counts.</p></div>
+        <div class="versus">
+          <div class="vs"><span>First test · 53 trades</span><b class="num" style="color:var(--pos)">+$565</b><span>looked promising</span></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="vs"><span>New data · 485 trades</span><b class="num" style="color:var(--neg)">−$14,839</b><span>0 of 5 years positive</span></div>
+        </div>
+      </div>
+
+      <div class="finding">
+        <div class="txt"><div class="label">Finding 3</div><h3>Popular YouTube strategies didn't hold up.</h3><p>A moving-average "AI trading bot" made money, but simply holding the same stocks made 2.6 times as much. Two popular day-trading setups lost money in both 5-year periods.</p></div>
+        <div class="chart" id="c3"></div>
+      </div>
+
+      <div class="finding">
+        <div class="txt"><div class="label">Finding 4</div><h3>Slow strategies built on company fundamentals survived.</h3><p>Buying after a big earnings beat and holding about 4 weeks beat the market in 7 of 10 years, in two separate periods. It isn't proven yet, so it's now being tracked on live data, with no money at risk.</p></div>
+        <div class="chart" id="c4"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="reality">
+    <div class="head"><div class="label">The bigger picture</div><h2>Some people do make money day trading. Almost everyone else loses.</h2><p class="lede">Our 25 tests aren't the only evidence. Researchers have studied every day trader in entire countries, and the results tell the same story.</p></div>
+    <div class="tiles">
+      <div class="tile"><b class="num" style="color:var(--neg)">97%</b><span>of Brazilian day traders who kept at it for 300+ days lost money</span></div>
+      <div class="tile"><b class="num" style="color:var(--neg)">1.1%</b><span>earned more than Brazil's minimum wage from it</span></div>
+      <div class="tile"><b class="num" style="color:var(--pos)">&lt;1%</b><span>of Taiwan's day traders made reliable profits after fees, year after year</span></div>
+      <div class="tile"><b class="num" style="color:var(--neg)">74–89%</b><span>of retail accounts trading CFDs in Europe lose money</span></div>
+    </div>
+    <div class="skills">
+      <div class="skill"><h3>Why a few win</h3><ul>
+        <li><b style="color:var(--ink)">Skill is real, just rare.</b> In Taiwan, the top 500 day traders kept winning the next year, earning about 0.38% a day after fees.</li>
+        <li><b style="color:var(--ink)">They have an actual edge</b>, like faster information, cheaper execution or a niche others ignore, instead of a chart pattern anyone can copy from a video.</li>
+        <li><b style="color:var(--ink)">They manage risk strictly</b>, with fixed losses per trade and daily stop limits, so one bad day can't wipe them out.</li>
+      </ul></div>
+      <div class="skill"><h3>Why most lose</h3><ul>
+        <li><b style="color:var(--ink)">Costs add up.</b> Every trade pays the bid-ask spread. Our tests found intraday edges under 2 basis points against roughly 3 basis points of cost.</li>
+        <li><b style="color:var(--ink)">They trade against professionals</b>: banks, market makers and high-speed firms with better data and lower costs.</li>
+        <li><b style="color:var(--ink)">Short winning streaks feel like skill.</b> Our stocks-in-play test made money on 53 trades and lost on 485. Many traders keep going despite steady losses.</li>
+        <li><b style="color:var(--ink)">Leverage makes losses bigger.</b> European regulators restricted leveraged trading in 2018 because so many retail accounts lost money.</li>
+      </ul></div>
+    </div>
+    <p class="note" style="font-size:15px;max-width:72ch"><b style="color:var(--ink)">So, believe it or not?</b> Day trading can work for a small, skilled minority. For most people, and for every popular strategy we tested, the data says it doesn't. If someone is selling a day-trading strategy, ask to see its 10-year record after costs.</p>
+    <p class="note">Sources: Chague, De-Losso &amp; Giovannetti, <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3423101" target="_blank" rel="noopener">"Day Trading for a Living?"</a> (2019, everyone who started day trading Brazilian index futures in 2013–2015) · Barber, Lee, Liu &amp; Odean, <a href="https://ideas.repec.org/a/eee/finmar/v18y2014icp1-24.html" target="_blank" rel="noopener">"The Cross-Section of Speculator Skill"</a>, Journal of Financial Markets (2014, Taiwan 1992–2006) · <a href="https://www.esma.europa.eu/node/84933" target="_blank" rel="noopener">European Securities and Markets Authority</a> (2018).</p>
+  </section>
+
+  <section>
+    <div class="head"><div class="label">How a strategy gets tested</div><h2>Six steps, the same for every strategy.</h2></div>
+    <div class="steps">
+      <div class="step"><span class="label">Step 1</span><h3>Collect the data</h3><p>Minute-by-minute prices, daily prices with delisted stocks kept in, and earnings from SEC filings, all as they were known at the time.</p></div>
+      <div class="step"><span class="label">Step 2</span><h3>Verify it</h3><p>The trading calendar is checked day by day (1,255 sessions, 0 mismatches), and gaps or bad bars are flagged before any test.</p></div>
+      <div class="step"><span class="label">Step 3</span><h3>Write the rules first</h3><p>Every rule, cost and pass mark is committed to version control before any result is seen. No changes after.</p></div>
+      <div class="step"><span class="label">Step 4</span><h3>Test once</h3><p>One run on 2016–2020 with pessimistic costs. Statistical significance is checked against luck with a bootstrap test.</p></div>
+      <div class="step"><span class="label">Step 5</span><h3>Replicate</h3><p>Anything that survives gets one more run on untouched 2021–2025 data. Each period can only be used once.</p></div>
+      <div class="step"><span class="label">Step 6</span><h3>Track it live</h3><p>Survivors are tracked on new data as it happens. The current forward test reaches its decision at 150 trades.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="head"><div class="label">Under the hood</div><h2>What it took to build.</h2></div>
+    <div class="skills">
+      <div class="skill"><h3>Data engineering</h3><ul><li>Pipelines for SEC EDGAR filings and Alpaca market data</li><li>Point-in-time S&amp;P 500 membership, with delisted companies kept to avoid survivorship bias</li><li>Versioned datasets with sealed holdout periods</li></ul></div>
+      <div class="skill"><h3>Statistics and analysis</h3><ul><li>Pre-registered hypotheses with written pass/fail rules</li><li>Bootstrap p-values, Sharpe ratios, Holm multiple-testing correction</li><li>Out-of-sample replication and benchmark-relative returns</li></ul></div>
+      <div class="skill"><h3>Cost and market microstructure</h3><ul><li>Measured real bid-ask spreads on 2,385 market minutes</li><li>Found the cost model charged 9.6 bps against about 1.0 bps actually paid, and kept the stricter one</li></ul></div>
+      <div class="skill"><h3>Software and AI</h3><ul><li>About 14,000 lines of Python with 925 automated tests and 288 commits</li><li>A local web app with SQLite storage</li><li>A paper-trading bot running 24/7 as a background service</li><li>Built working with AI coding tools</li></ul></div>
+    </div>
+    <div class="stack"><span class="chip">Python</span><span class="chip">SQLite</span><span class="chip">SEC EDGAR XBRL</span><span class="chip">Alpaca API</span><span class="chip">Bootstrap statistics</span><span class="chip">Git</span><span class="chip">Claude AI</span></div>
+  </section>
+
+  <section>
+    <div class="builder">
+      <div class="head">
+        <div class="label">Built by</div>
+        <h2>Eduardo Flores Hidalgo</h2>
+        <p class="lede">Business Analytics student at UC Riverside. I designed LAVQO's research process, set the rules for what counts as proof, chose every strategy to test and made every call on risk. The research says "no" more than it says "yes," and that's the point.</p>
+        <div class="cta" style="margin-top:8px"><a class="btn primary" href="https://www.linkedin.com/in/eduardoflohid" target="_blank" rel="noopener" style="text-decoration:none">Connect on LinkedIn</a><button class="btn" data-go="explore">Back to the results</button></div>
+      </div>
+      <div class="head" style="align-content:start">
+        <div class="label">Live right now</div>
+        <p class="note" style="font-size:15px"><b style="color:var(--ink)">Earnings drift forward test:</b> the top survivor is tracked on new market data as it happens, with rules frozen in advance. Decision at 150 closed trades.</p>
+        <p class="note" style="font-size:15px"><b style="color:var(--ink)">Paper-trading bot:</b> trading a simulated account every market day, judged after 4 weeks on fixed rules.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Results are historical tests and simulated (paper) trading. Past results don't guarantee future returns. Nothing here is investment advice or a recommendation to buy or sell any security.</span>
+    <span>© 2026 LAVQO</span>
+  </footer>
+</div>
+
+<script>
+const D=[
+ {n:'Machine-learning price forecast',s:'LAVQO model',t:'AI / ML',v:'rej',r:'0 trades',d:'Its forecasts were no better than guessing "no move," so it never found a trade worth the cost.',k:[['0','trades, 2026'],['4','symbols: SPY, AAPL, MSFT, NVDA'],['= baseline','forecast error'],['175','sessions tested']]},
+ {n:'Challenger ML model',s:'LAVQO model',t:'AI / ML',v:'rej',r:'Loses',d:'Slightly worse than the baseline, and it lost money after costs or failed to beat holding.',k:[['109','trades'],['−0.19%','AAPL'],['−0.17%','MSFT'],['+0.05%','SPY vs +0.13% holding']]},
+ {n:'Opening-range breakout',s:'Classic day trading',t:'Intraday',v:'rej',r:'15/16 lose',d:'Slightly positive before costs, negative after. 15 of 16 versions lost money.',k:[['384','trades, 4 symbols'],['15 of 16','range settings negative'],['0','significant results'],['5–60 min','ranges tested']]},
+ {n:'Intraday momentum',s:'Gao et al., academic paper',t:'Intraday',v:'rej',r:'−$2,735',d:'Lost money before costs, and more after.',k:[['259','trades'],['19%','win rate'],['−$86','before costs'],['1.00','p-value']]},
+ {n:'Trend-day continuation',s:'Day-trading pattern',t:'Intraday',v:'rej',r:'−$1,046',d:'A tiny gain before costs turned into a loss.',k:[['92','trades'],['32%','win rate'],['+$42','before costs'],['0.98','p-value']]},
+ {n:'Gap-down reversal',s:'Day-trading pattern',t:'Intraday',v:'rej',r:'−$747',d:'Lost money even before costs.',k:[['33','trades'],['33%','win rate'],['−$116','before costs'],['0.97','p-value']]},
+ {n:'NR7 compression breakout',s:'Classic chart pattern',t:'Intraday',v:'rej',r:'−$390',d:'Positive before costs, negative after.',k:[['46','trades'],['39%','win rate'],['+$237','before costs'],['0.79','p-value']]},
+ {n:'Stocks-in-play breakout',s:'Zarattini et al., 2024 paper',t:'Intraday',v:'rej',r:'−$14,839',d:'Made +$565 on its first 53 trades, then lost money in all 5 years of new data.',k:[['485','trades, 2021–25'],['44%','win rate'],['0 of 5','years positive'],['0.998','p-value']]},
+ {n:'Stocks-in-play momentum',s:'Zarattini et al., 2024 paper',t:'Intraday',v:'rej',r:'−$2,674',d:'Looked profitable on incomplete data, lost money on complete data.',k:[['95','trades'],['43%','win rate'],['+$467','before costs'],['0.91','p-value']]},
+ {n:'Fade the early movers (short)',s:'LAVQO hypothesis',t:'Intraday',v:'rej',r:'−$36,711',d:'About +1.7 bps per trade before costs, far below the cost of trading.',k:[['1,778','trades, S&P 100'],['0 of 5','years positive'],['−2.36','Sharpe'],['1.00','p-value']]},
+ {n:'Intraday continuation',s:'Day-trading pattern',t:'Intraday',v:'rej',r:'−$57,710',d:'Negative before costs in a 5-year, 100-stock test.',k:[['3,691','trades'],['0 of 5','years positive'],['63%','max drawdown'],['1.00','p-value']]},
+ {n:'VWAP reversion',s:'Day-trading pattern',t:'Intraday',v:'rej',r:'−$26,212',d:'Won more than half its trades, but the wins were too small to cover costs.',k:[['2,627','trades'],['53%','win rate'],['+0.2 bps','edge before costs'],['1.00','p-value']]},
+ {n:'Earnings gap-up continuation',s:'Earnings-day trading',t:'Earnings',v:'rej',r:'−$4,391',d:'Tested on 1,934 earnings releases. By 10:00 the move was already priced in.',k:[['220','trades'],['2 of 5','years positive'],['+1.4 bps','edge before costs'],['0.98','p-value']]},
+ {n:'Earnings gap-down reversal',s:'Earnings-day trading',t:'Earnings',v:'rej',r:'−$6,160',d:'Buying recoveries after bad earnings lost money before costs.',k:[['128','trades'],['33%','win rate'],['1 of 5','years positive'],['0.997','p-value']]},
+ {n:'Weekly reversal',s:'Academic anomaly',t:'Multi-day',v:'rej',r:'−$3,980',d:'Made money in a rising market but trailed holding the S&P 500 equally weighted.',k:[['+$71,338','strategy'],['+$75,318','benchmark'],['1 of 5','years ahead'],['0.46','p-value']]},
+ {n:'12-month momentum',s:'Academic anomaly',t:'Multi-day',v:'rej',r:'−$12,647',d:'Trailed the benchmark by about 3.3% a year.',k:[['+$33,672','strategy'],['+$46,319','benchmark'],['1 of 4','years ahead'],['0.86','p-value']]},
+ {n:'52-week high',s:'Academic anomaly',t:'Multi-day',v:'rej',r:'−$14,854',d:'Trailed the benchmark by about 3.8% a year.',k:[['+$33,011','strategy'],['+$47,865','benchmark'],['2 of 4','years ahead'],['0.82','p-value']]},
+ {n:'Post-earnings drift',s:'Academic research, 25,857 reports',t:'Fundamentals',v:'cand',r:'+$21,124',d:'Beat the market in both periods and 7 of 10 years. Not significant in either period alone, so it is now on a live forward test.',k:[['+$11,920','vs market, 2016–20'],['+$21,124','vs market, 2021–25'],['7 of 10','years ahead'],['0.075','p-value, 2021–25']]},
+ {n:'Earnings announcement premium',s:'Academic anomaly',t:'Earnings',v:'rej',r:'−$55,259',d:'The edge was about 5 bps per trade, far less than the cost of trading.',k:[['7,495','trades'],['1 of 5','years ahead'],['−0.88','Sharpe of excess'],['0.88','p-value']]},
+ {n:'Gross profitability',s:'Academic quality factor',t:'Fundamentals',v:'rej',r:'−$17,247',d:'The most profitable companies trailed the benchmark in this period.',k:[['+$54,577','strategy'],['+$71,824','benchmark'],['2 of 5','years ahead'],['0.81','p-value']]},
+ {n:'Low accruals',s:'Academic quality factor',t:'Fundamentals',v:'cand',r:'+$19,936',d:'Companies whose profits are backed by cash beat the market in both periods, about 4–5% a year. Not yet significant.',k:[['+$22,909','vs market, 2016–20'],['+$19,936','vs market, 2021–25'],['7 of 10','years ahead'],['0.093','p-value, 2021–25']]},
+ {n:'Earnings swing, 5-day hold',s:'Faster version of drift',t:'Earnings',v:'rej',r:'−$2,886',d:'The drift comes in weeks 2–4. Holding only one week captured none of it.',k:[['795','trades'],['2 of 5','years ahead'],['−$2,142','2-day hold'],['0.71','p-value']]},
+ {n:'Liquidity sweep + fair-value gap',s:'Popular YouTube day trader',t:'YouTube',v:'rej',r:'−0.13 R',d:'Lost in both periods, and even with zero trading costs.',k:[['−0.13 R','per trade, 2016–20'],['−0.12 R','per trade, 2021–25'],['31%','win rate'],['−0.04 R','at zero cost']]},
+ {n:'EMA-20 pullback, 3R target',s:'Popular YouTube day trader',t:'YouTube',v:'rej',r:'−0.10 R',d:'Lost money in all 10 years. Tight stops made costs about 0.09 R per trade.',k:[['10,552','trades'],['0 of 10','years positive'],['28%','win rate'],['−0.01 R','at zero cost']]},
+ {n:'20/50-day moving-average bot',s:'Popular YouTube "AI trading bot"',t:'YouTube',v:'rej',r:'−$66,395',d:'Made money, but holding the same stocks made about 2.6 times as much.',k:[['+$40,731','bot, 2021–25'],['+$107,126','holding, 2021–25'],['9 of 11','years behind holding'],['1.00','p-value']]}
+];
+const TYPES=['All','Intraday','Earnings','Multi-day','Fundamentals','YouTube','AI / ML'];
+let filter='All',sel=17;
+const rows=document.getElementById('rows'),card=document.getElementById('card'),fil=document.getElementById('filters');
+fil.innerHTML=TYPES.map(t=>`<button class="chipbtn" data-t="${t}" aria-pressed="${t===filter}">${t}${t==='All'?' · 25':''}</button>`).join('');
+function badge(v){return v==='cand'?'<span class="status cand">Survived</span>':'<span class="status rej">Rejected</span>'}
+function renderRows(){
+  rows.innerHTML=D.map((x,i)=>({x,i})).filter(o=>filter==='All'||o.x.t===filter).map(({x,i})=>`<tr tabindex="0" data-i="${i}" aria-selected="${i===sel}"><td><b>${x.n}</b><span class="src">${x.s}</span></td><td class="hide-sm">${x.t}</td><td class="r num">${x.r}</td><td>${badge(x.v)}</td></tr>`).join('');
+}
+function renderCard(){
+  const x=D[sel];
+  card.innerHTML=`${badge(x.v)}<div><div class="label">${x.t} · ${x.s}</div><h3 style="margin-top:6px">${x.n}</h3></div><div class="verdict">${x.d}</div><div class="kv">${x.k.map(k=>`<div><b>${k[0]}</b><span>${k[1]}</span></div>`).join('')}</div><p class="note">Rules written before testing. Pessimistic trading costs included.</p>`;
+}
+fil.addEventListener('click',e=>{const b=e.target.closest('.chipbtn');if(!b)return;filter=b.dataset.t;fil.querySelectorAll('.chipbtn').forEach(c=>c.setAttribute('aria-pressed',c===b));renderRows()});
+function pick(tr){if(!tr)return;sel=+tr.dataset.i;rows.querySelectorAll('tr').forEach(r=>r.setAttribute('aria-selected',r===tr));renderCard()}
+rows.addEventListener('click',e=>pick(e.target.closest('tr')));
+rows.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(e.target.closest('tr'))}});
+renderRows();renderCard();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(!b)return;document.getElementById(b.dataset.go).scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})});
+
+/* ticker tape of real results; duplicated once so the loop is seamless */
+(function(){const items=[['Moving-average "AI bot"','−$66,395 vs holding','n'],['EMA-20 pullback','0 of 10 years profitable','n'],['Post-earnings drift','+$21,124 vs market','p'],['Intraday continuation','−$57,710','n'],['Low accruals','+$19,936 vs market','p'],['Stocks-in-play breakout','+$565 → −$14,839','n'],['Sweep + fair-value gap','loses even at zero cost','n'],['VWAP reversion','53% wins, still −$26,212','n'],['Earnings premium','−$55,259 vs market','n'],['ML price forecast','no better than guessing','n']];
+ const html=items.map(i=>`<span><b>${i[0]}</b> <span class="${i[2]}">${i[2]==='p'?'▲':'▼'} ${i[1]}</span></span>`).join('');
+ document.getElementById('tape').innerHTML=html+html.replace(/<span><b>/g,'<span aria-hidden="true"><b>');})();
+
+/* charts */
+const NS='http://www.w3.org/2000/svg';
+function el(t,a,txt){const n=document.createElementNS(NS,t);for(const k in a)n.setAttribute(k,a[k]);if(txt!=null)n.textContent=txt;return n}
+function tipper(box){const t=document.createElement('div');t.className='tip';t.hidden=true;box.appendChild(t);return{show(ev,s){const r=box.getBoundingClientRect();t.textContent=s;t.style.left=(ev.clientX-r.left)+'px';t.style.top=(ev.clientY-r.top)+'px';t.hidden=false},hide(){t.hidden=true}}}
+
+/* horizontal bars around zero, one axis, with an optional reference line */
+function hbars(id,data,opt){
+  const box=document.getElementById(id),W=520,rowH=34,L=150,R=82,T=opt.ref?26:8,H=T+data.length*rowH+24;
+  const min=Math.min(0,...data.map(d=>d[1]),opt.ref?opt.ref[0]:0),max=Math.max(0,...data.map(d=>d[1]),opt.ref?opt.ref[0]:0);
+  const x=v=>L+(v-min)/(max-min)*(W-L-R);
+  const s=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':opt.aria});
+  opt.ticks.forEach(v=>{s.appendChild(el('line',{x1:x(v),x2:x(v),y1:T-4,y2:H-22,stroke:'var(--line)','stroke-width':1}));s.appendChild(el('text',{x:x(v),y:H-6,'text-anchor':'middle'},opt.fmt(v)))});
+  s.appendChild(el('line',{x1:x(0),x2:x(0),y1:T-4,y2:H-22,stroke:'var(--muted)','stroke-width':1}));
+  const tip=tipper(box);
+  data.forEach((d,i)=>{const y=T+i*rowH,h=18,x0=x(Math.min(0,d[1])),w=Math.max(2,Math.abs(x(d[1])-x(0)));
+    s.appendChild(el('text',{x:L-10,y:y+h/2+4,'text-anchor':'end',class:'strong'},d[0]));
+    const r=el('rect',{x:x0,y,width:w,height:h,rx:4,fill:d[2]||(d[1]<0?'var(--neg)':'var(--pos)')});
+    const hit=el('rect',{x:L,y:y-6,width:W-L-R+R,height:h+12,fill:'transparent'});
+    hit.addEventListener('pointermove',ev=>tip.show(ev,d[0]+': '+opt.fmt(d[1],true)));hit.addEventListener('pointerleave',tip.hide);
+    s.appendChild(r);
+    s.appendChild(el('text',{x:W-2,y:y+h/2+4,'text-anchor':'end',class:'strong'},opt.fmt(d[1],true)));
+    s.appendChild(hit);
+  });
+  if(opt.ref){const rx=x(opt.ref[0]);s.appendChild(el('line',{x1:rx,x2:rx,y1:T-8,y2:H-22,stroke:'var(--ink)','stroke-width':2,'stroke-dasharray':'4 4'}));s.appendChild(el('text',{x:rx,y:T-12,'text-anchor':'end',class:'strong'},opt.ref[1]))}
+  box.appendChild(s);
+  if(opt.legend){const lg=document.createElement('div');lg.className='legend';lg.innerHTML=opt.legend;box.appendChild(lg)}
+}
+hbars('c1',[['Fade early movers',1.7],['Earnings gap-up',1.4],['VWAP reversion',0.2],['Intraday continuation',-1.8]],
+  {aria:'Profit per trade before costs, in basis points, against a 3.1 basis point spread',ticks:[-2,0,2],ref:[3.1,'Cost to cross spread ≈ 3.1 bps'],fmt:(v,l)=>(v>0&&l?'+':'')+v+(l?' bps':''),
+   legend:'<span><i style="background:var(--pos)"></i>Profit before costs</span><span><i style="background:var(--neg)"></i>Loss before costs</span><span>Dashed line: typical round-trip spread</span>'});
+hbars('c3',[['Moving-average bot',40.7,'var(--muted)'],['Just holding',107.1],['EMA-20 pullback',-54.7],['Sweep + FVG',-2.5]],
+  {aria:'Profit per 100 thousand dollars, 2021 to 2025',ticks:[-50,0,50,100],fmt:(v,l)=>l?((v<0?'−$':'+$')+Math.abs(v).toFixed(1)+'k'):(v<0?'−':'')+'$'+Math.abs(v)+'k',
+   legend:'<span>2021–2025, profit per $100k. Day-trading setups at $100 risked per trade.</span>'});
+
+/* yearly excess: vertical bars around zero */
+(function(){
+  const box=document.getElementById('c4'),Y=[[2016,-3044],[2017,10658],[2018,4660],[2019,5213],[2020,-5567],[2021,8155],[2022,5349],[2023,6812],[2024,-561],[2025,1368]];
+  const W=520,H=250,L=52,R=10,T=26,B=30,min=-6000,max=12000,y=v=>T+(max-v)/(max-min)*(H-T-B),bw=(W-L-R)/Y.length;
+  const s=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Post-earnings drift: profit above the market by year, 2016 to 2025'});
+  [-5000,0,5000,10000].forEach(v=>{s.appendChild(el('line',{x1:L,x2:W-R,y1:y(v),y2:y(v),stroke:v===0?'var(--muted)':'var(--line)','stroke-width':1}));s.appendChild(el('text',{x:L-8,y:y(v)+4,'text-anchor':'end'},(v<0?'−':'')+'$'+Math.abs(v/1000)+'k'))});
+  const sx=L+bw*5;s.appendChild(el('line',{x1:sx,x2:sx,y1:T-14,y2:H-B,stroke:'var(--muted)','stroke-width':1,'stroke-dasharray':'3 4'}));
+  s.appendChild(el('text',{x:L+4,y:T-12,class:'strong'},'Test 2016–20'));s.appendChild(el('text',{x:sx+6,y:T-12,class:'strong'},'Replication 2021–25'));
+  const tip=tipper(box);
+  Y.forEach((d,i)=>{const x=L+i*bw+bw*.18,w=bw*.64,y0=y(Math.max(0,d[1])),h=Math.max(2,Math.abs(y(d[1])-y(0)));
+    s.appendChild(el('rect',{x,y:y0,width:w,height:h,rx:4,fill:d[1]<0?'var(--neg)':'var(--pos)'}));
+    s.appendChild(el('text',{x:x+w/2,y:H-10,'text-anchor':'middle'},"'"+String(d[0]).slice(2)));
+    const hit=el('rect',{x:L+i*bw,y:T,width:bw,height:H-T-B,fill:'transparent'});
+    hit.addEventListener('pointermove',ev=>tip.show(ev,d[0]+': '+(d[1]<0?'−$':'+$')+Math.abs(d[1]).toLocaleString()+' vs market'));hit.addEventListener('pointerleave',tip.hide);s.appendChild(hit)});
+  box.appendChild(s);
+  const lg=document.createElement('div');lg.className='legend';lg.innerHTML='<span><i style="background:var(--pos)"></i>Beat the market</span><span><i style="background:var(--neg)"></i>Trailed the market</span><span>7 of 10 years ahead</span>';box.appendChild(lg);
+})();
+</script>
+
+</body>
+</html>
