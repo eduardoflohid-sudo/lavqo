@@ -41,6 +41,8 @@
 .sky-twinkle{position:absolute;width:2px;height:2px;border-radius:50%;background:#f2f3f6;opacity:.12;box-shadow:0 0 4px 1px rgba(242,243,246,.35)}
 .sky-twinkle.is-warm{background:#ecd6a8;box-shadow:0 0 4px 1px rgba(236,214,168,.32)}
 @media (prefers-reduced-motion:no-preference){.sky-near{animation:sky-drift 240s ease-in-out infinite alternate}.sky-bright{animation-duration:300s}.sky-twinkle{animation:sky-twinkle 12s ease-in-out infinite}}
+.shooting{position:absolute;height:2px;width:180px;border-radius:2px;pointer-events:none;opacity:0;
+  background:linear-gradient(90deg,rgba(236,214,168,0),rgba(236,214,168,.75) 65%,#fff);box-shadow:0 0 8px 1px rgba(236,214,168,.45)}
 @keyframes sky-drift{to{transform:translate3d(-14px,8px,0)}}
 @keyframes sky-twinkle{0%,100%{opacity:.15}50%{opacity:.9}}
 *{box-sizing:border-box}
@@ -329,7 +331,17 @@ footer{border-top:1px solid var(--line);margin-top:72px;padding-block:28px 48px;
  const sky=document.createElement('div');sky.id='sky';sky.setAttribute('aria-hidden','true');
  sky.append(layer(small?220:460,.35,.85,.18,.5,.05,'sky-far'),layer(small?60:120,.7,1.25,.35,.75,.08,'sky-near'),layer(small?10:22,1.2,1.8,.65,.95,.14,'sky-near sky-bright',true));
  for(let i=0;i<(small?8:16);i++){const t=document.createElement('span');t.className='sky-twinkle';t.style.left=(rng()<.5?rng()*28:72+rng()*28).toFixed(2)+'%';t.style.top=(rng()*100).toFixed(2)+'%';t.style.animationDuration=(9+rng()*9).toFixed(1)+'s';t.style.animationDelay=(-rng()*18).toFixed(1)+'s';if(rng()<.25)t.classList.add('is-warm');sky.append(t)}
- document.body.prepend(sky)})();
+ document.body.prepend(sky);
+ /* easter egg: a shooting star about every 5 seconds, sometimes two (skipped for reduced motion) */
+ if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+  const shoot=()=>{const el=document.createElement('span');el.className='shooting';
+   const x=10+Math.random()*75,y=Math.random()*45,ang=18+Math.random()*22,len=150+Math.random()*130,dist=260+Math.random()*260;
+   el.style.left=x+'%';el.style.top=y+'%';el.style.width=len+'px';sky.append(el);
+   const dx=Math.cos(ang*Math.PI/180)*dist,dy=Math.sin(ang*Math.PI/180)*dist;
+   el.animate([{transform:`rotate(${ang}deg) translateX(0)`,opacity:0},{opacity:1,offset:.15},{transform:`rotate(${ang}deg) translateX(${dist}px)`,opacity:0}],{duration:900+Math.random()*500,easing:'cubic-bezier(.3,.6,.4,1)'}).onfinish=()=>el.remove()};
+  const loop=()=>{if(!document.hidden){shoot();if(Math.random()<.3)setTimeout(shoot,250+Math.random()*500)}setTimeout(loop,4200+Math.random()*1600)};
+  setTimeout(loop,2500)}
+})();
 
 const D=[
  {n:'Machine-learning price forecast',s:'LAVQO model',t:'AI / ML',v:'rej',r:'0 trades',d:'Its forecasts were no better than guessing "no move," so it never found a trade worth the cost.',k:[['0','trades, 2026'],['4','symbols: SPY, AAPL, MSFT, NVDA'],['= baseline','forecast error'],['175','sessions tested']]},
