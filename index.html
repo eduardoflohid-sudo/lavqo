@@ -23,7 +23,7 @@
 /* Layout: a research lab's public results board; hero verdict, a working explorer, findings with charts, then the method and the builder */
 /* LAVQO app palette: black ink, brass accent, serif display (single dark look, matching the app) */
 :root{
-  --bg:#07090c; --surface:#0f1319; --surface-2:#151a22; --ink:#efebe3; --muted:#aab0ba; --line:rgba(226,220,206,.1);
+  --bg:#050506; --surface:rgba(15,19,25,.86); --surface-2:#151a22; --ink:#efebe3; --muted:#aab0ba; --line:rgba(226,220,206,.1);
   --accent:#d8a65a; --accent-hi:#ecc283; --accent-soft:rgba(216,166,90,.1); --brass-ink:#1a1206;
   --pos:#2fa3b3; --neg:#d9583f;            /* chart poles, validated for CVD on the dark surface */
   --ok:#4fd1a1; --warn:#e4b66b; --bad:#f27a7d; /* status, always with a label */
@@ -32,8 +32,19 @@
   --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
   color-scheme:dark;
 }
+
+/* night sky, ported from the LAVQO app (same seed, so it is the same sky) */
+#sky{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden;contain:strict;
+  background:radial-gradient(1100px 680px at 88% -12%,rgba(200,171,116,.06),transparent 62%),radial-gradient(900px 620px at -6% 112%,rgba(150,160,182,.04),transparent 60%),#050506}
+#sky::before{content:"";position:absolute;left:-20%;right:-20%;top:28%;height:46%;transform:rotate(-14deg);background:radial-gradient(closest-side,rgba(176,186,206,.05),rgba(176,186,206,.018) 55%,transparent 100%);filter:blur(30px)}
+.sky-layer{position:absolute;inset:-24px;width:calc(100% + 48px);height:calc(100% + 48px)}
+.sky-twinkle{position:absolute;width:2px;height:2px;border-radius:50%;background:#f2f3f6;opacity:.12;box-shadow:0 0 4px 1px rgba(242,243,246,.35)}
+.sky-twinkle.is-warm{background:#ecd6a8;box-shadow:0 0 4px 1px rgba(236,214,168,.32)}
+@media (prefers-reduced-motion:no-preference){.sky-near{animation:sky-drift 240s ease-in-out infinite alternate}.sky-bright{animation-duration:300s}.sky-twinkle{animation:sky-twinkle 12s ease-in-out infinite}}
+@keyframes sky-drift{to{transform:translate3d(-14px,8px,0)}}
+@keyframes sky-twinkle{0%,100%{opacity:.08}50%{opacity:.62}}
 *{box-sizing:border-box}
-body{background:radial-gradient(1100px 520px at 75% -8%,rgba(216,166,90,.09),transparent 62%) no-repeat,var(--bg);color:var(--ink);font:16px/1.6 var(--body);
+body{background:var(--bg);color:var(--ink);font:16px/1.6 var(--body);
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .wrap{max-width:1080px;margin:0 auto}
 a{color:var(--accent)}
@@ -44,7 +55,7 @@ p{margin:0}
 .label{font:500 12px/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .num{font-family:var(--mono);font-variant-numeric:tabular-nums}
 .lede{color:var(--muted);max-width:64ch;font-size:17px}
-section{padding-block:60px;border-top:1px solid var(--line);display:grid;gap:28px}
+section{padding-block:84px 12px;display:grid;gap:32px}
 .head{display:grid;gap:10px}
 
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:22px;flex-wrap:wrap}
@@ -54,7 +65,7 @@ section{padding-block:60px;border-top:1px solid var(--line);display:grid;gap:28p
 .live{display:inline-flex;align-items:center;gap:8px;font:500 12px/1 var(--mono);color:var(--muted)}
 .live i{width:8px;height:8px;border-radius:50%;background:var(--ok)}
 
-.tape{overflow:hidden;border-block:1px solid var(--line);background:var(--surface);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+.tape{overflow:hidden;border-block:1px solid var(--line);background:rgba(15,19,25,.6);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
 .tape-track{display:flex;gap:36px;width:max-content;padding:11px 0;font:500 13px/1 var(--mono);white-space:nowrap}
 .tape-track span{color:var(--muted)}
 .tape-track b{font-weight:500;color:var(--ink)}
@@ -63,7 +74,7 @@ section{padding-block:60px;border-top:1px solid var(--line);display:grid;gap:28p
 @keyframes tape{to{transform:translateX(-50%)}}
 .verdictline{font-size:18px;color:var(--muted)}
 .verdictline b{color:var(--ink);font:500 22px var(--mono)}
-.hero{display:grid;gap:26px;padding-block:36px 60px}
+.hero{display:grid;gap:28px;padding-block:72px 40px}
 .hero h1{font-size:clamp(46px,7.6vw,92px);line-height:.98;font-weight:400;max-width:14ch}
 .hero h1 em{font-style:italic;color:var(--accent-hi)}
 .tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden}
@@ -107,8 +118,8 @@ td.r{text-align:right}
 .note{font-size:14px;color:var(--muted)}
 
 /* findings */
-.findings{display:grid;gap:22px}
-.finding{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:28px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:26px;align-items:center}
+.findings{display:grid;gap:18px}
+.finding{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:40px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:34px;align-items:center}
 .finding .txt{display:grid;gap:10px}
 .finding .txt p{color:var(--muted)}
 .chart{position:relative;min-width:0}
@@ -137,7 +148,12 @@ td.r{text-align:right}
 .chip{font:500 13px/1 var(--mono);padding:8px 11px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted)}
 
 .builder{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:28px;align-items:start}
-footer{border-top:1px solid var(--line);padding-block:28px 48px;color:var(--muted);font-size:13px;display:grid;gap:6px}
+.appvid{display:grid;gap:18px}
+.appvid .frame{position:relative;border-radius:20px;overflow:hidden;border:1px solid var(--line);background:#000;box-shadow:0 30px 80px -40px rgba(216,166,90,.35)}
+.appvid video,.appvid .ph{display:block;width:100%;aspect-ratio:16/9;background:#000}
+.appvid .ph{display:grid;place-items:center;text-align:center;gap:14px;padding:24px;background:radial-gradient(600px 300px at 50% 40%,rgba(216,166,90,.12),transparent 70%),#07090c}
+@media (max-width:560px){.finding{padding:22px;gap:24px}.appvid .frame{border-radius:14px}}
+footer{border-top:1px solid var(--line);margin-top:72px;padding-block:28px 48px;color:var(--muted);font-size:13px;display:grid;gap:6px}
 
 @media (max-width:860px){
   .explorer,.finding,.builder{grid-template-columns:1fr}
@@ -163,7 +179,7 @@ footer{border-top:1px solid var(--line);padding-block:28px 48px;color:var(--mute
     <h1>Does day trading actually work? <em>We tested it.</em></h1>
     <p class="verdictline"><b class="num">25</b> strategies · <b class="num">10</b> years of market data · <b class="num" style="color:var(--neg)">23</b> rejected · <b class="num" style="color:var(--pos)">2</b> survived</p>
     <p class="lede">LAVQO Research tests the trading strategies people actually use, from academic papers to viral YouTube videos, on a decade of real market data with real trading costs. Every result is public, including the losers.</p>
-    <div class="cta"><button class="btn primary" data-go="explore">Explore all 25 results</button><button class="btn" data-go="findings">What the data showed</button></div>
+    <div class="cta"><button class="btn primary" data-go="explore">Explore all 25 results</button><button class="btn" data-go="app">Watch the app</button></div>
     <div class="tiles">
       <div class="tile"><b class="num">25</b><span>strategies tested, each with rules written in advance</span></div>
       <div class="tile"><b class="num">14.3M</b><span>one-minute price bars in a single test, 2021–2025</span></div>
@@ -171,6 +187,13 @@ footer{border-top:1px solid var(--line);padding-block:28px 48px;color:var(--mute
       <div class="tile"><b class="num">925</b><span>automated tests checking the engine</span></div>
     </div>
   </div>
+
+  <section id="app">
+    <div class="head"><div class="label">The app</div><h2>The trading app built around this research.</h2><p class="lede">LAVQO pairs the research with a working app: live market data, a paper-trading bot that follows strict risk rules, and safety stops that pause trading when something looks wrong.</p></div>
+    <div class="appvid"><div class="frame">
+<video controls playsinline preload="metadata" poster="app-tour-poster.jpg"><source src="lavqo-app-tour.mp4" type="video/mp4"></video>
+    </div></div>
+  </section>
 
   <section>
     <div class="head"><div class="label">The problem</div><h2>Most trading advice is never tested honestly.</h2></div>
@@ -292,6 +315,22 @@ footer{border-top:1px solid var(--line);padding-block:28px 48px;color:var(--mute
 </div>
 
 <script>
+/* night sky: static SVG layers from a fixed seed plus a few slow twinkles (ported from the app) */
+(()=>{const NS='http://www.w3.org/2000/svg',W=1600,H=1000;
+ const rng=(seed=>()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296})(20261115);
+ const small=Math.min(innerWidth,innerHeight)<700;
+ function layer(count,rMin,rMax,oMin,oMax,gold,cls,halo){const svg=document.createElementNS(NS,'svg');svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.setAttribute('preserveAspectRatio','xMidYMid slice');svg.setAttribute('class','sky-layer '+cls);svg.setAttribute('aria-hidden','true');
+  let h=halo?'<defs><radialGradient id="sky-halo"><stop offset="0" stop-color="#f4f2ee" stop-opacity=".22"/><stop offset="1" stop-color="#f4f2ee" stop-opacity="0"/></radialGradient></defs>':'';
+  for(let i=0;i<count;i++){let x=rng()*W,y=rng()*H;const dx=(x-W/2)/(W/2),dy=(y-H/2)/(H/2);if(dx*dx+dy*dy<.3&&rng()<.4){x=rng()<.5?rng()*W*.2:W-rng()*W*.2}
+   const r=rMin+(rMax-rMin)*Math.pow(rng(),2.2),o=oMin+(oMax-oMin)*rng(),fill=rng()<gold?'#e6cf9f':'#eef0f4';
+   if(halo)h+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r*4.5).toFixed(2)}" fill="url(#sky-halo)"/>`;
+   h+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="${fill}" opacity="${o.toFixed(2)}"/>`}
+  svg.innerHTML=h;return svg}
+ const sky=document.createElement('div');sky.id='sky';sky.setAttribute('aria-hidden','true');
+ sky.append(layer(small?160:340,.3,.75,.1,.36,.05,'sky-far'),layer(small?40:80,.6,1.1,.24,.55,.07,'sky-near'),layer(small?7:16,1.05,1.5,.5,.78,.12,'sky-near sky-bright',true));
+ for(let i=0;i<(small?5:10);i++){const t=document.createElement('span');t.className='sky-twinkle';t.style.left=(rng()<.5?rng()*28:72+rng()*28).toFixed(2)+'%';t.style.top=(rng()*100).toFixed(2)+'%';t.style.animationDuration=(9+rng()*9).toFixed(1)+'s';t.style.animationDelay=(-rng()*18).toFixed(1)+'s';if(rng()<.25)t.classList.add('is-warm');sky.append(t)}
+ document.body.prepend(sky)})();
+
 const D=[
  {n:'Machine-learning price forecast',s:'LAVQO model',t:'AI / ML',v:'rej',r:'0 trades',d:'Its forecasts were no better than guessing "no move," so it never found a trade worth the cost.',k:[['0','trades, 2026'],['4','symbols: SPY, AAPL, MSFT, NVDA'],['= baseline','forecast error'],['175','sessions tested']]},
  {n:'Challenger ML model',s:'LAVQO model',t:'AI / ML',v:'rej',r:'Loses',d:'Slightly worse than the baseline, and it lost money after costs or failed to beat holding.',k:[['109','trades'],['−0.19%','AAPL'],['−0.17%','MSFT'],['+0.05%','SPY vs +0.13% holding']]},
